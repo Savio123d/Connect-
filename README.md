@@ -102,4 +102,4 @@ Desenvolver um sistema web e mobile para otimizar a gestão de atividades e o ac
 
 Aqui está uma prévia da nossa tela inicial (dashboard), que oferece uma visão geral das tarefas, produtividade e comunicados.
 
-![Demonstração do Dashboard](./Connect-/TelaInicial.jpg)
+![Demonstração do Dashboard](./Connect-/Telainicial.jpg)

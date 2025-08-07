@@ -105,6 +105,7 @@ Aqui está uma prévia da nossa tela inicial (dashboard), que oferece uma visão
 ![Demonstração do Dashboard](./Telainicial.jpg)
 
 🎭 Atores do Sistema
+
 Colaborador: Usuário padrão do sistema. Pode visualizar tarefas, enviar e receber feedbacks e acompanhar o mural de avisos.
 
 Gestor (Administrador): Usuário com permissões elevadas. É responsável por cadastrar novos colaboradores, gerenciar a equipe, criar e atribuir tarefas, publicar avisos e visualizar os gráficos de produtividade.

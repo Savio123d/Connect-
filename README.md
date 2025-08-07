@@ -70,3 +70,36 @@ Desenvolver um sistema web e mobile para otimizar a gestão de atividades e o ac
 | **Mês 2** | Desenvolvimento da estrutura base, layout e sistema de login da versão Web. |
 | **Mês 3** | Implementação das funcionalidades principais: tarefas, avisos, feedbacks e gráficos. |
 | **Mês 4** | Desenvolvimento da versão mobile e integração com a plataforma Web. |
+
+---
+## 📋 Requisitos do Sistema
+
+### Requisitos Funcionais (RF)
+
+* **RF01 - Cadastrar Colaborador:** O sistema deve permitir que um administrador cadastre novos colaboradores, incluindo informações como nome, e-mail, cargo e setor.
+* **RF02 - Autenticar Usuário:** O sistema deve permitir que usuários (colaboradores e gestores) façam login de forma segura para acessar a plataforma.
+* **RF03 - Gerenciar Informações de Funcionários:** O sistema deve centralizar e permitir a gestão das informações da equipe por parte dos gestores.
+* **RF04 - Criar Tarefas:** O sistema deve permitir a criação de novas tarefas.
+* **RF05 - Atribuir Tarefas:** Deve ser possível delegar tarefas para colaboradores individuais ou para equipes inteiras.
+* **RF06 - Priorizar Tarefas:** As tarefas devem poder ser classificadas com níveis de prioridade (baixo, médio e alto).
+* **RF07 - Visualizar Gráficos de Produtividade:** O sistema deve exibir gráficos intuitivos para visualizar o desempenho por setor.
+* **RF08 - Publicar Avisos e Notícias:** O sistema deve possuir um mural onde gestores possam publicar comunicados para manter todos informados.
+* **RF09 - Enviar e Receber Feedbacks:** Deve existir uma interface dedicada para promover a troca de feedbacks entre os colaboradores e equipes.
+
+### Requisitos Não Funcionais (RNF)
+
+* **RNF01 - Usabilidade:** A interface do sistema, tanto web quanto mobile, deve ser intuitiva e de fácil utilização para todos os níveis de usuários.
+* **RNF02 - Desempenho:** A plataforma deve carregar rapidamente, especialmente os painéis com gráficos de produtividade, mesmo com um grande volume de dados.
+* **RNF03 - Compatibilidade:** O sistema deve ser compatível com os principais navegadores web (Desktop) e com os sistemas operacionais iOS e Android (Mobile).
+* **RNF04 - Segurança:** Todos os dados dos colaboradores, tarefas e feedbacks devem ser armazenados de forma segura e o acesso deve ser restrito por nível de usuário.
+* **RNF05 - Escalabilidade:** A arquitetura do sistema deve ser capaz de suportar o crescimento no número de clientes e usuários, conforme o plano de receita.
+* **RNF06 - Disponibilidade:** O sistema deve estar disponível para uso contínuo (24/7), sendo uma ferramenta central para a gestão das empresas clientes.
+* **RNF07 - Manutenibilidade:** O código deve ser bem organizado para facilitar futuras manutenções e a implementação de novas funcionalidades (REP, Banco de Horas).
+
+---
+
+## 🖥️ Protótipo da Interface
+
+Aqui está uma prévia da nossa tela inicial (dashboard), que oferece uma visão geral das tarefas, produtividade e comunicados.
+
+![Demonstração do Dashboard](./Connect-/TelaInicial.jpg)

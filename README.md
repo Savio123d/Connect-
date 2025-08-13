@@ -110,4 +110,4 @@ Colaborador: Usuário padrão do sistema. Pode visualizar tarefas, enviar e rece
 
 Gestor (Administrador): Usuário com permissões elevadas. É responsável por cadastrar novos colaboradores, gerenciar a equipe, criar e atribuir tarefas, publicar avisos e visualizar os gráficos de produtividade.
 
-
+[Veja a descrição detalhada dos Casos de Uso](./casos%20de%20uso.md)

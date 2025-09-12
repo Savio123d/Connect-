@@ -7,6 +7,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/colaboradores")
+// Adicionado para permitir requisições do frontend que roda em localhost:3232
+@CrossOrigin(origins = "http://localhost:3232")
 public class ColaboradorController {
 
     private final ColaboradorService service;
@@ -32,6 +34,7 @@ public class ColaboradorController {
 
     @PutMapping("/{id}")
     public Colaborador atualizar(@PathVariable Long id, @RequestBody Colaborador colaborador) {
+        // Garante que estamos atualizando o colaborador com o ID correto
         colaborador.setId(id);
         return service.salvar(colaborador);
     }

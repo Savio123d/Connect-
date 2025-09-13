@@ -4,16 +4,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import com.Connect.Utilidades.TelefoneUtil;
 
 @Entity
-    public class Colaborador {
+public class Colaborador {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-        private String nome;
-        private String email;
-        private Long telefone;
-        private String cargo;
+    private Long id;
+
+    private String nome;
+    private String email;
+    private String telefone;
+    private String cargo;
 
     public Long getId() {
         return id;
@@ -39,12 +42,12 @@ import jakarta.persistence.Id;
         this.email = email;
     }
 
-    public Long getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(Long telefone) {
-        this.telefone = telefone;
+    public void setTelefone(String telefone) {
+        this.telefone = TelefoneUtil.formatar(telefone);
     }
 
     public String getCargo() {
@@ -55,5 +58,3 @@ import jakarta.persistence.Id;
         this.cargo = cargo;
     }
 }
-
-

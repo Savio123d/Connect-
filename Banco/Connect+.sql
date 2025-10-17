@@ -1,73 +1,104 @@
-/* Lógico_1: Script Final para o Banco de Dados Connect+ */
 
--- Tabela para organizar os usuários em setores/departamentos
+CREATE TABLE Status_Tarefa (
+    ID_Status INT PRIMARY KEY AUTO_INCREMENT,
+    Nome_Status VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE Prioridade_Tarefa (
+    ID_Prioridade INT PRIMARY KEY AUTO_INCREMENT,
+    Nome_Prioridade VARCHAR(50) UNIQUE NOT NULL
+);
+
+
 CREATE TABLE Setor (
     ID_Setor INT PRIMARY KEY AUTO_INCREMENT,
-    Nome_Setor VARCHAR(100) NOT NULL
+    Nome_Setor VARCHAR(100) UNIQUE NOT NULL
 );
 
--- Tabela principal de usuários do sistema
-CREATE TABLE Usuarios (
-    ID_Usuario INT PRIMARY KEY AUTO_INCREMENT,
-    ID_Setor INT,
+CREATE TABLE Colaborador (
+    ID_Colaborador INT PRIMARY KEY AUTO_INCREMENT,
+    ID_Setor INT NOT NULL,
+    ID_Gerente INT, 
     Nome VARCHAR(100) NOT NULL,
-    Email VARCHAR(100) NOT NULL UNIQUE,
-    Senha VARCHAR(255) NOT NULL, -- Aumentado para senhas com hash
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Senha VARCHAR(255) NOT NULL, 
     Cargo VARCHAR(100),
-    Tipo_Usuario VARCHAR(50) DEFAULT 'Colaborador',
     Telefone VARCHAR(20),
     Foto_Perfil_URL VARCHAR(255),
-    CONSTRAINT FK_Usuarios_Setor FOREIGN KEY (ID_Setor) REFERENCES Setor (ID_Setor)
+    CONSTRAINT FK_Colaborador_Setor FOREIGN KEY (ID_Setor) REFERENCES Setor (ID_Setor),
+    CONSTRAINT FK_Colaborador_Gerente FOREIGN KEY (ID_Gerente) REFERENCES Colaborador (ID_Colaborador)
 );
 
--- Tabela para armazenar as tarefas
 CREATE TABLE Tarefas (
     ID_Tarefa INT PRIMARY KEY AUTO_INCREMENT,
+    ID_Status INT NOT NULL,
+    ID_Prioridade INT NOT NULL,
     Titulo VARCHAR(100) NOT NULL,
     Descricao TEXT,
-    Prioridade ENUM('Baixa', 'Média', 'Alta', 'Urgente') DEFAULT 'Média',
-    Status ENUM('Pendente', 'Em Andamento', 'Concluída', 'Cancelada') DEFAULT 'Pendente',
-    Data_Criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Data_Conclusao DATETIME
+    Data_Criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Data_Vencimento DATETIME, 
+    Data_Conclusao DATETIME NULL, 
+    CONSTRAINT FK_Tarefas_Status FOREIGN KEY (ID_Status) REFERENCES Status_Tarefa (ID_Status),
+    CONSTRAINT FK_Tarefas_Prioridade FOREIGN KEY (ID_Prioridade) REFERENCES Prioridade_Tarefa (ID_Prioridade)
 );
 
--- Tabela de associação para atribuir tarefas a USUÁRIOS específicos
-CREATE TABLE Tarefa_Atribuicoes_Usuario (
-    ID_Usuario INT,
-    ID_Tarefa INT,
-    PRIMARY KEY (ID_Usuario, ID_Tarefa),
-    CONSTRAINT FK_Atribuicao_Usuario FOREIGN KEY (ID_Usuario) REFERENCES Usuarios (ID_Usuario),
-    CONSTRAINT FK_Atribuicao_Tarefa_Usuario FOREIGN KEY (ID_Tarefa) REFERENCES Tarefas (ID_Tarefa)
+CREATE TABLE Tarefa_Atribuicoes_Colaborador (
+    ID_Tarefa INT NOT NULL,
+    ID_Colaborador INT NOT NULL,
+    ID_Atribuidor INT, 
+    PRIMARY KEY (ID_Tarefa, ID_Colaborador), 
+    CONSTRAINT FK_Atribuicao_Tarefa FOREIGN KEY (ID_Tarefa) REFERENCES Tarefas (ID_Tarefa) ON DELETE CASCADE,
+    CONSTRAINT FK_Atribuicao_Colaborador FOREIGN KEY (ID_Colaborador) REFERENCES Colaborador (ID_Colaborador) ON DELETE CASCADE,
+    CONSTRAINT FK_Atribuicao_Atribuidor FOREIGN KEY (ID_Atribuidor) REFERENCES Colaborador (ID_Colaborador) ON DELETE SET NULL
 );
 
--- NOVA TABELA: Para atribuir tarefas a SETORES/EQUIPES inteiras
 CREATE TABLE Tarefa_Atribuicoes_Setor (
-    ID_Setor INT,
-    ID_Tarefa INT,
-    PRIMARY KEY (ID_Setor, ID_Tarefa),
-    CONSTRAINT FK_Atribuicao_Setor FOREIGN KEY (ID_Setor) REFERENCES Setor (ID_Setor),
-    CONSTRAINT FK_Atribuicao_Tarefa_Setor FOREIGN KEY (ID_Tarefa) REFERENCES Tarefas (ID_Tarefa)
+    ID_Tarefa INT NOT NULL,
+    ID_Setor INT NOT NULL,
+    PRIMARY KEY (ID_Tarefa, ID_Setor),
+    CONSTRAINT FK_AtribuicaoSetor_Tarefa FOREIGN KEY (ID_Tarefa) REFERENCES Tarefas (ID_Tarefa) ON DELETE CASCADE,
+    CONSTRAINT FK_AtribuicaoSetor_Setor FOREIGN KEY (ID_Setor) REFERENCES Setor (ID_Setor) ON DELETE CASCADE
 );
 
--- Tabela para o mural de avisos
 CREATE TABLE Avisos (
     ID_Aviso INT PRIMARY KEY AUTO_INCREMENT,
-    ID_Usuario INT, -- Corrigido de ID_Usuarios para ID_Usuario
+    ID_Autor INT NOT NULL,
     Titulo VARCHAR(100) NOT NULL,
     Conteudo TEXT,
-    Data_Publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT FK_Avisos_Usuario FOREIGN KEY (ID_Usuario) REFERENCES Usuarios (ID_Usuario)
+    Data_Publicacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_Avisos_Autor FOREIGN KEY (ID_Autor) REFERENCES Colaborador (ID_Colaborador)
 );
 
--- Tabela para o sistema de feedbacks entre usuários
 CREATE TABLE Feedbacks (
-    ID_Feedback INT PRIMARY KEY AUTO_INCREMENT, -- Chave primária simplificada
-    ID_Remetente INT,
-    ID_Destinatario INT,
+    ID_Feedback INT PRIMARY KEY AUTO_INCREMENT,
+    ID_Remetente INT, 
+    ID_Destinatario INT NOT NULL,
     Mensagem TEXT NOT NULL,
-    Data_Envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Anonimo BOOLEAN DEFAULT FALSE,
-    CONSTRAINT FK_Feedback_Remetente FOREIGN KEY (ID_Remetente) REFERENCES Usuarios (ID_Usuario),
-    CONSTRAINT FK_Feedback_Destinatario FOREIGN KEY (ID_Destinatario) REFERENCES Usuarios (ID_Usuario)
+    Data_Envio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Anonimo BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT FK_Feedbacks_Remetente FOREIGN KEY (ID_Remetente) REFERENCES Colaborador (ID_Colaborador),
+    CONSTRAINT FK_Feedbacks_Destinatario FOREIGN KEY (ID_Destinatario) REFERENCES Colaborador (ID_Colaborador)
 );
-ID_Aviso
+
+
+CREATE TABLE Tarefa_Comentarios (
+    ID_Comentario INT PRIMARY KEY AUTO_INCREMENT,
+    ID_Tarefa INT NOT NULL,
+    ID_Autor INT NOT NULL,
+    Comentario TEXT NOT NULL,
+    Data_Criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_Comentarios_Tarefa FOREIGN KEY (ID_Tarefa) REFERENCES Tarefas (ID_Tarefa) ON DELETE CASCADE,
+    CONSTRAINT FK_Comentarios_Autor FOREIGN KEY (ID_Autor) REFERENCES Colaborador (ID_Colaborador)
+);
+
+INSERT INTO Status_Tarefa (Nome_Status) VALUES
+('Pendente'),
+('Em Andamento'),
+('Concluída'),
+('Cancelada');
+
+INSERT INTO Prioridade_Tarefa (Nome_Prioridade) VALUES
+('Baixa'),
+('Média'),
+('Alta'),
+('Urgente');

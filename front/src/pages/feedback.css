@@ -91,10 +91,11 @@ body {
   color: #1f2937;
 }
 
+/* Updated active tab color to match dashboard orange theme */
 .feedback-tabs button.active {
-  color: #2563eb;
+  color: #f6ad55;
   font-weight: 600;
-  border-bottom-color: #2563eb;
+  border-bottom-color: #f6ad55;
 }
 
 /* Painel de Conteúdo */
@@ -103,6 +104,13 @@ body {
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+.feedback-panel h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 20px;
 }
 
 /* Formulário de Feedback */
@@ -121,18 +129,19 @@ body {
   border-radius: 8px;
   font-size: 14px;
   font-family: Inter, system-ui, sans-serif;
-  outline-color: #2563eb;
+  outline-color: #f6ad55;
 }
 
 .feedback-form textarea {
   resize: vertical;
 }
 
+/* Updated submit button to match dashboard orange theme */
 .btn-submit {
   padding: 12px 14px;
   border: 0;
   border-radius: 8px;
-  background: #2563eb;
+  background: #f6ad55;
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -141,7 +150,7 @@ body {
 }
 
 .btn-submit:hover {
-  background: #1d4ed8;
+  background: #ed8936;
 }
 
 #success-message {
@@ -156,6 +165,11 @@ body {
   gap: 20px;
 }
 
+.feedback-list p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
 .feedback-card {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
@@ -166,9 +180,15 @@ body {
 }
 
 /* Cores por Categoria */
-.feedback-card.verde { border-left-color: #22c55e; }
-.feedback-card.azul { border-left-color: #3b82f6; }
-.feedback-card.laranja { border-left-color: #f97316; }
+.feedback-card.verde {
+  border-left-color: #22c55e;
+}
+.feedback-card.azul {
+  border-left-color: #3b82f6;
+}
+.feedback-card.laranja {
+  border-left-color: #f97316;
+}
 
 .card-header {
   display: flex;

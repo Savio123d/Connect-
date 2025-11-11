@@ -1,0 +1,167 @@
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: #f4f7fe;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 250px;
+    background: #226dee;
+    color: white;
+    position: fixed;
+    height: 100%;
+    padding: 20px;
+  }
+
+  .sidebar h2 {
+    margin-top: 0;
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+  }
+
+  .sidebar li {
+    margin: 15px 0;
+  }
+
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+
+  .sidebar a:hover, .sidebar a.active {
+    background: #2f5fe3;
+  }
+
+  /* Main */
+  .main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  h1 {
+    margin-top: 0;
+    color: #1e5dca;
+  }
+
+  /* Abas */
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .tabs button {
+    border: none;
+    background: #e5e7eb;
+    color: #3068c9;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 600;
+  }
+
+  .tabs button.active {
+    background: #3564e7;
+    color: white;
+  }
+
+  /* Formulário */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 500px;
+  }
+
+  input, textarea, select {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  textarea {
+    resize: none;
+    height: 100px;
+  }
+
+  button[type="submit"] {
+    background: #1f53e4;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  #success {
+    background: #22c55e;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* Cards */
+  .feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .feedback-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .feedback-card.azul { border-left: 8px solid #3b82f6; }
+  .feedback-card.verde { border-left: 8px solid #22c55e; }
+  .feedback-card.laranja { border-left: 8px solid #f97316; }
+
+  .feedback-card h3 {
+    margin: 0;
+    color: #0a1f44;
+  }
+
+  .feedback-card p {
+    margin: 5px 0;
+  }
+
+  .feedback-card button {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+  }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edição de Perfil - Connect+</title>
+  <link rel="stylesheet" href="src/editarPerfil.css">
+ 
+</head>
+<body>
+  <div class="container">
+    <h2>EDIÇÃO DE PERFIL DO COLABORADOR</h2>
+    <div class="perfil-container">
+      <div class="form-section">
+        <form id="perfilForm">
+          <input type="text" id="nome" placeholder="teste232" required />
+          <input type="text" id="nomeCompleto" placeholder="teste232" required />
+          <input type="email" id="email" placeholder="teste123@gmail.com" required />
+          <input type="text" id="telefone" placeholder="(11)558556-6564" required />
+          <input type="text" id="cargo" placeholder="Analista de Projetos Jr." required />
+          <input type="text" id="data" placeholder="15/03/1990" required />
+
+          <div class="setor-area">
+            <label for="setor">Setor (Apenas Gerentes podem editar)</label>
+            <input type="text" id="setor" value="Marketing & Comunicação" readonly />
+          </div>
+
+          <input type="text" id="matricula" placeholder="C+2023005" required />
+
+          <div class="botoes">
+            <button type="submit" class="btn-salvar">Salvar Alterações</button>
+            <button type="button" class="btn-cancelar" onclick="resetForm()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="foto-section">
+        <h4>Foto do Perfil</h4>
+        <img id="fotoPreview" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Foto do Perfil">
+        <label for="fotoInput" class="btn-foto">Alterar Foto</label>
+        <input type="file" id="fotoInput" accept="image/*" hidden>
+      </div>
+    </div>
+
+    <div class="progress-bar" id="progressBar">
+      <div class="progress" id="progress"></div>
+      <span id="progressText">Salvando...</span>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Alterações salvas com sucesso!</div>
+<script  src="src/editarPerfil.jsx"></script>
+</body>
+</html>

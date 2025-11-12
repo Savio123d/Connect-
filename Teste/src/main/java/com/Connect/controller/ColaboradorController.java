@@ -1,14 +1,17 @@
 package com.Connect.controller;
 
-import com.Connect.model.Colaborador;
+import com.Connect.dto.ColaboradorRequestDTO;
+import com.Connect.dto.ColaboradorResponseDTO;
 import com.Connect.service.ColaboradorService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/colaboradores")
-// Adicionado para permitir requisições do frontend que roda em localhost:3232
-@CrossOrigin(origins = "http://localhost:3232")
+// O @CrossOrigin foi removido daqui, pois agora é tratado globalmente no SecurityConfig
 public class ColaboradorController {
 
     private final ColaboradorService service;
@@ -17,30 +20,72 @@ public class ColaboradorController {
         this.service = service;
     }
 
+    /**
+     * Endpoint GET /api/colaboradores
+     * Lista todos os colaboradores.
+     * Retorna DTOs de Resposta (sem senha).
+     */
     @GetMapping
-    public List<Colaborador> listar() {
-        return service.listarTodos();
+    public ResponseEntity<List<ColaboradorResponseDTO>> listar() {
+        return ResponseEntity.ok(service.listarTodos());
     }
 
+    /**
+     * Endpoint GET /api/colaboradores/{id}
+     * Busca um colaborador por ID.
+     * Retorna DTO de Resposta (sem senha).
+     */
     @GetMapping("/{id}")
-    public Colaborador buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<ColaboradorResponseDTO> buscarPorId(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(service.buscarPorId(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrar
+        }
     }
 
+    /**
+     * Endpoint POST /api/colaboradores
+     * Cria um novo colaborador (usado pelo register.jsx).
+     * Recebe um DTO de Requisição (com senha).
+     * Retorna 201 Created e um DTO de Resposta (sem senha).
+     */
     @PostMapping
-    public Colaborador criar(@RequestBody Colaborador colaborador) {
-        return service.salvar(colaborador);
+    public ResponseEntity<ColaboradorResponseDTO> criar(@RequestBody ColaboradorRequestDTO dto) {
+        ColaboradorResponseDTO colaboradorSalvo = service.salvar(dto);
+
+        // Retorna o status 201 Created com a localização do novo recurso
+        URI location = URI.create("/api/colaboradores/" + colaboradorSalvo.getId());
+        return ResponseEntity.created(location).body(colaboradorSalvo);
     }
 
+    /**
+     * Endpoint PUT /api/colaboradores/{id}
+     * Atualiza um colaborador existente.
+     * Recebe um DTO de Requisição.
+     * Retorna 200 OK e um DTO de Resposta (sem senha).
+     */
     @PutMapping("/{id}")
-    public Colaborador atualizar(@PathVariable Long id, @RequestBody Colaborador colaborador) {
-        // Garante que estamos atualizando o colaborador com o ID correto
-        colaborador.setId(id);
-        return service.salvar(colaborador);
+    public ResponseEntity<ColaboradorResponseDTO> atualizar(@PathVariable Long id, @RequestBody ColaboradorRequestDTO dto) {
+        try {
+            return ResponseEntity.ok(service.atualizar(id, dto));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrar
+        }
     }
 
+    /**
+     * Endpoint DELETE /api/colaboradores/{id}
+     * Deleta um colaborador.
+     * Retorna 204 No Content.
+     */
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        service.deletar(id);
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        try {
+            service.deletar(id);
+            return ResponseEntity.noContent().build(); // Retorna 204
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se não encontrar
+        }
     }
 }

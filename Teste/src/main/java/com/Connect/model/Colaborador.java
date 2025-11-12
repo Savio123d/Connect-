@@ -1,60 +1,59 @@
+// Refatorado para usar @ManyToOne com Setor
 package com.Connect.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import com.Connect.Utilidades.TelefoneUtil;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "colaborador")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Colaborador {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_colaborador")
     private Long id;
 
+    // --- RELACIONAMENTO CORRIGIDO ---
+    // Em vez de "Integer idSetor", agora é um relacionamento
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_setor") // Nome da coluna FK no Logico.png
+    private Setor setor;
+    // --- FIM DA CORREÇÃO ---
+
+    @Column(name = "id_gerente")
+    private Integer idGerente; // (Manteremos este como Integer por enquanto)
+
+    @Column(name = "nome", nullable = false)
     private String nome;
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
-    private String telefone;
+
+    @Column(name = "senha", nullable = false)
+    private String senha;
+
+    @Column(name = "cargo")
     private String cargo;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "telefone")
+    private String telefone;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "foto_perfil_url")
+    private String fotoPerfilUrl;
 
-    public String getNome() {
-        return nome;
-    }
+    @Column(name = "cpf", unique = true)
+    private String cpf;
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    @Column(name = "nivel")
+    private String nivel;
 
     public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = TelefoneUtil.formatar(telefone);
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
+        return TelefoneUtil.formatar(this.telefone);
     }
 }

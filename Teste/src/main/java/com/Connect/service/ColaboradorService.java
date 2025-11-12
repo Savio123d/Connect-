@@ -1,38 +1,126 @@
+// Refatorado para lidar com o relacionamento com Setor
 package com.Connect.service;
 
+import com.Connect.dto.ColaboradorRequestDTO;
+import com.Connect.dto.ColaboradorResponseDTO;
+import com.Connect.dto.LoginRequestDTO;
+import com.Connect.mapper.ColaboradorMapper;
 import com.Connect.model.Colaborador;
-import com.Connect.repository.ColaboradorRepository; // Import alterado
+import com.Connect.model.Setor; // Importar Setor
+import com.Connect.repository.ColaboradorRepository;
+import com.Connect.repository.SetorRepository; // Importar SetorRepository
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ColaboradorService {
 
-    // Injetando o repositório JPA real
     private final ColaboradorRepository repository;
+    private final SetorRepository setorRepository; // Injetar repo de Setor
+    private final ColaboradorMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public ColaboradorService(ColaboradorRepository repository) {
+    public ColaboradorService(ColaboradorRepository repository,
+                              SetorRepository setorRepository, // Adicionar
+                              ColaboradorMapper mapper,
+                              PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.setorRepository = setorRepository; // Adicionar
+        this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public List<Colaborador> listarTodos() {
-        return repository.findAll();
+    @Transactional(readOnly = true)
+    public List<ColaboradorResponseDTO> listarTodos() {
+        return repository.findAll()
+                .stream()
+                // Mapeia cada entidade para um ResponseDTO (sem senha)
+                .map(mapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Colaborador buscarPorId(Long id) {
-        // O método findById do JpaRepository retorna um Optional
-        // Usamos orElse(null) para retornar o colaborador se existir, ou null se não.
-        return repository.findById(id).orElse(null);
+    @Transactional(readOnly = true)
+    public ColaboradorResponseDTO buscarPorId(Long id) {
+        Colaborador colaborador = repository.findById(id)
+                // Lança uma exceção se não encontrar
+                .orElseThrow(() -> new RuntimeException("Colaborador não encontrado com ID: " + id));
+        return mapper.toResponseDTO(colaborador);
     }
 
-    public Colaborador salvar(Colaborador colaborador) {
-        return repository.save(colaborador);
+    @Transactional
+    public ColaboradorResponseDTO salvar(ColaboradorRequestDTO dto) {
+        // 1. Busca a entidade Setor com base no ID recebido
+        Setor setor = setorRepository.findById(dto.getIdSetor())
+                .orElseThrow(() -> new RuntimeException("Setor não encontrado com ID: " + dto.getIdSetor()));
+
+        // 2. Converte DTO para Entidade
+        Colaborador colaborador = mapper.toEntity(dto);
+
+        // 3. Define o relacionamento com o Setor
+        colaborador.setSetor(setor);
+
+        // 4. Codifica a senha antes de salvar
+        colaborador.setSenha(passwordEncoder.encode(dto.getSenha()));
+
+        // 5. Salva a entidade
+        Colaborador colaboradorSalvo = repository.save(colaborador);
+
+        // 6. Converte a entidade salva para o DTO de resposta
+        return mapper.toResponseDTO(colaboradorSalvo);
     }
 
+    @Transactional
+    public ColaboradorResponseDTO atualizar(Long id, ColaboradorRequestDTO dto) {
+        // 1. Busca a entidade Colaborador existente
+        Colaborador colaborador = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Colaborador não encontrado com ID: " + id));
+
+        // 2. Busca a entidade Setor com base no ID recebido
+        Setor setor = setorRepository.findById(dto.getIdSetor())
+                .orElseThrow(() -> new RuntimeException("Setor não encontrado com ID: " + dto.getIdSetor()));
+
+        // 3. Atualiza os campos da entidade com os dados do DTO
+        mapper.updateEntityFromDTO(dto, colaborador);
+
+        // 4. Define o novo relacionamento com o Setor
+        colaborador.setSetor(setor);
+
+        // 5. Verifica se a senha foi fornecida para atualização
+        if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
+            colaborador.setSenha(passwordEncoder.encode(dto.getSenha()));
+        }
+
+        // 6. Salva a entidade atualizada
+        Colaborador colaboradorAtualizado = repository.save(colaborador);
+
+        // 7. Retorna o DTO de resposta
+        return mapper.toResponseDTO(colaboradorAtualizado);
+    }
+
+    @Transactional
     public void deletar(Long id) {
-        // Usando o método padrão do JpaRepository
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Colaborador não encontrado com ID: " + id);
+        }
         repository.deleteById(id);
     }
-}
 
+    @Transactional(readOnly = true)
+    public ColaboradorResponseDTO login(LoginRequestDTO dto) {
+        // 1. Encontrar o usuário pelo email (usando o método do repositório)
+        Colaborador colaborador = repository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("Credenciais inválidas: Usuário não encontrado."));
+
+        // 2. Verificar a senha (comparar a senha crua do DTO com o hash do banco)
+        if (!passwordEncoder.matches(dto.getSenha(), colaborador.getSenha())) {
+            throw new RuntimeException("Credenciais inválidas: Senha incorreta.");
+        }
+
+        // 3. Retornar DTO de resposta (sem senha)
+        return mapper.toResponseDTO(colaborador);
+    }
+}

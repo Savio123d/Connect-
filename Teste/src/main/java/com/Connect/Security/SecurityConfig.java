@@ -32,22 +32,19 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         // Libera endpoints de autenticação e registro
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/colaboradores").permitAll()
-
-                        // Libera /api/colaboradores (para o dropdown)
                         .requestMatchers(HttpMethod.GET, "/api/colaboradores").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/colaboradores/**").permitAll()
 
-                        // Libera a nova API de Feedbacks
+                        // Libera endpoints de setores
+                        .requestMatchers("/api/setores/**").permitAll()
+
+                        // Libera endpoints de feedbacks
                         .requestMatchers("/api/feedbacks/**").permitAll()
-
-                        // --- LIBERAÇÃO NECESSÁRIA ---
-                        // Permite que o frontend (feedback.jsx, register.jsx)
-                        // busque a lista de setores
-                        .requestMatchers(HttpMethod.GET, "/api/setores/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/setores").permitAll() // Permitir criar setores (temporário)
-                        // --- FIM DA LIBERAÇÃO ---
 
                         // Exige autenticação para o resto
                         .anyRequest().authenticated()

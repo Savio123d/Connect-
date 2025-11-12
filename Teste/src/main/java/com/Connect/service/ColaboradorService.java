@@ -24,21 +24,24 @@ public class ColaboradorService {
     private final ColaboradorMapper mapper;
     private final PasswordEncoder passwordEncoder;
 
+    // Construtor completo com todas as injeções
     public ColaboradorService(ColaboradorRepository repository,
-                              SetorRepository setorRepository, // Adicionar
+                              SetorRepository setorRepository, // Injeção do Setor
                               ColaboradorMapper mapper,
                               PasswordEncoder passwordEncoder) {
         this.repository = repository;
-        this.setorRepository = setorRepository; // Adicionar
+        this.setorRepository = setorRepository; // Atribuição
         this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
     public List<ColaboradorResponseDTO> listarTodos() {
-        return repository.findAll()
+        // --- ESTA É A CORREÇÃO PRINCIPAL PARA O BUG DO 'DESTINATÁRIO' ---
+        // Troca repository.findAll() por repository.findAllWithSetor()
+        // para forçar o JOIN e trazer os dados do setor.
+        return repository.findAllWithSetor()
                 .stream()
-                // Mapeia cada entidade para um ResponseDTO (sem senha)
                 .map(mapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -109,6 +112,12 @@ public class ColaboradorService {
         repository.deleteById(id);
     }
 
+    /**
+     * MÉTODO DE LOGIN: Autentica um colaborador.
+     * @param dto DTO com email e senha.
+     * @return ColaboradorResponseDTO (sem senha) se as credenciais forem válidas.
+     * @throws RuntimeException Se as credenciais forem inválidas.
+     */
     @Transactional(readOnly = true)
     public ColaboradorResponseDTO login(LoginRequestDTO dto) {
         // 1. Encontrar o usuário pelo email (usando o método do repositório)

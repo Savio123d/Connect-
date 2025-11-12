@@ -51,12 +51,20 @@ public class ColaboradorController {
      * Retorna 201 Created e um DTO de Resposta (sem senha).
      */
     @PostMapping
-    public ResponseEntity<ColaboradorResponseDTO> criar(@RequestBody ColaboradorRequestDTO dto) {
-        ColaboradorResponseDTO colaboradorSalvo = service.salvar(dto);
+    public ResponseEntity<?> criar(@RequestBody ColaboradorRequestDTO dto) {
+        try {
+            System.out.println("[v0] Recebendo requisição de registro: " + dto.getEmail());
+            ColaboradorResponseDTO colaboradorSalvo = service.salvar(dto);
+            System.out.println("[v0] Colaborador criado com sucesso: " + colaboradorSalvo.getId());
 
-        // Retorna o status 201 Created com a localização do novo recurso
-        URI location = URI.create("/api/colaboradores/" + colaboradorSalvo.getId());
-        return ResponseEntity.created(location).body(colaboradorSalvo);
+            // Retorna o status 201 Created com a localização do novo recurso
+            URI location = URI.create("/api/colaboradores/" + colaboradorSalvo.getId());
+            return ResponseEntity.created(location).body(colaboradorSalvo);
+        } catch (RuntimeException e) {
+            System.err.println("[v0] Erro ao criar colaborador: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
     }
 
     /**
@@ -88,4 +96,6 @@ public class ColaboradorController {
             return ResponseEntity.notFound().build(); // Retorna 404 se não encontrar
         }
     }
+
+    private record ErrorResponse(String message) {}
 }
